@@ -18,13 +18,13 @@ select create_time,b.uid,city_name,hotel_id,hotel_seq,hotel_name,from_date,to_da
 `
 
 ## 2. 查询浏览的游记的页面位置
-位置字段为itemOrder，数值加1为所处位置
+位置字段为itemOrder，数值加1为所处位置  
 `
 select * from travel_client_access where dt='2017-08-03' and uid='45523841-53E3-428E-A6F0-C9861FA11F8E' and requesturi='/api/book/getSimplified' and requestparammap like '%type=2%' order by currenttime asc
 `
 
 ## 3. 查询浏览的酒店的页面位置
-位置字段为itemOrder，数值加1为所处位置
+位置字段为itemOrder，数值加1为所处位置  
 `
 select * from travel_client_access where dt='2017-08-03' and uid='45523841-53E3-428E-A6F0-C9861FA11F8E' and requesturi='/api/book/element' and requestparammap like '%poiType=2%' order by currenttime asc
 `
