@@ -51,3 +51,11 @@ select * from mobile_user_new2 where uid='47B360D0-0424-49C0-AE12-77CC94902C8F'
 `
 select * from travel_client_access where dt='2017-09-12' and uid='47B360D0-0424-49C0-AE12-77CC94902C8F' and requesturi='/api/city/locate' order by currenttime asc
 `
+
+## 7. 机票查询
+
+查询单用户机票订单，如查询多用户，删除uid限定条件即可
+`
+select b.uid,depcity,arrcity,deptime from orderinfo_channel inner join (select touch_uid,uid from ods_travel_touch_uid where uid='234FBE36-4B5D-4C50-A003-3924A59D232B') as b on orderinfo_channel.gid=b.touch_uid where dt>='2017-06-22' and dt<='2017-06-22' AND orderstatus NOT IN (0, 12, 20, 51, 91) ;
+`
+
