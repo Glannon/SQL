@@ -34,6 +34,7 @@ as h
 inner join
 travel_client_access as x
 on h.uid=x.uid and h.dt=x.dt where x.requesturi='/app/api/order/search' and x.dt<='2017-11-14' and x.dt>='2017-11-07' and h.currenttime>=x.currenttime
+
 `
 
 ## 3. 行中用户查看行中城市的用户数
@@ -69,10 +70,10 @@ select a.id,count(distinct(a.uid)) from (select regexp_extract(requestparammap,'
 select a.uid,a.maxtime,a.mintime,a.shijiancha,a.locate_cityid,b.destid,b.destname from (select uid,max(currenttime) as maxtime,min(currenttime) as mintime,datediff(max(currenttime),min(currenttime)) as shijiancha, regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1) as locate_cityid from travel_client_access where dt>='2017-08-04' and dt<='2017-09-04' and requesturi='/api/city/locate' group by uid,regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1)) as a, (select uid,destid,destname from mobile_user_new2 where destname is not null) as b where a.uid=b.uid order by a.uid asc
 `
 
-**随机样本b**  
+**随机样本b**    
 `(select uid,activetime,destid,destname from mobile_user_new2 where destname is not null order by rand() limit 10000) as b`
 
-**1000条**  
+**1000条**    
 `order by rand() limit 10000`
 
 **完整代码取样代码**
@@ -139,14 +140,14 @@ on a.uid=b.uid and a.dt=b.dt where a.currenttime<=b.currenttime group by a.label
 select a.dt,a.uid,regexp_extract(requestparammap,'query=([^, }]+)',1) as query,b.distname from travel_client_access as a,poi_detail as b where a.dt>='2017-10-11' and a.dt<='2017-12-10' and a.requesturi='/api/search/dest'  and regexp_extract(requestparammap,'query=([^, }]+)',1)=CONCAT(dist_name,'一日游') or regexp_extract(requestparammap,'query=([^, }]+)',1)='一日游' or regexp_extract(requestparammap,'query=([^, }]+)',1)=CONCAT(dist_name,'周边一日游')
 `
 ## 15. 访问过某个城市或景区的用户
-**城市**
+**城市**   
 `
 select distinct(x.userid) from   tmp_userid_uid_20171211 as x inner join
   (select distinct(uid) from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' and dt <='2017-11-05' and
   regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) in ('299914')) as y
  on x.uid=y.uid
 `
-**景区、景点**
+**景区、景点**    
 `
  select distinct(x.userid) from  tmp_userid_uid_20171211 as x inner join
    (select distinct(uid) from travel_client_access where dt>='2017-11-05' and dt <='2017-11-05' and requesturi='/api/book/element' and requestparammap like '%poiType=4%' and regexp_extract(requestparammap,'[{ ]poiId=([0-9]+)',1) in ('713020')) as y
