@@ -18,6 +18,7 @@ select create_time,b.uid,city_name,hotel_id,hotel_seq,hotel_name,from_date,to_da
 
 ## 2.同一天查看酒店订单和订单中酒店的用户数
 `
+
 select count(distinct(h.uid)) from
 
 (select c.uid,y.dt,y.currenttime from
@@ -146,7 +147,8 @@ select distinct(x.userid) from   tmp_userid_uid_20171211 as x inner join
   (select distinct(uid) from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' and dt <='2017-11-05' and
   regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) in ('299914')) as y
  on x.uid=y.uid
-`
+`  
+
 **景区、景点**    
 `
  select distinct(x.userid) from  tmp_userid_uid_20171211 as x inner join
