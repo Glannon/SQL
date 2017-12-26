@@ -18,24 +18,18 @@ select create_time,b.uid,city_name,hotel_id,hotel_seq,hotel_name,from_date,to_da
 
 ## 2.同一天查看酒店订单和订单中酒店的用户数
 `
-
 select count(distinct(h.uid)) from
-
 (select c.uid,y.dt,y.currenttime from
-
 (select b.uid,create_time,hotel_name,from_date from mppb_order_channel as a inner join ods_travel_touch_uid as b on a.uid=b.touch_uid)
 as c
 inner join
 (select uid,dt,currenttime,regexp_extract(requestparammap,'[{ ]NAME=([\u4e00-\u9fa5]+)',1) as name from travel_client_access where requesturi='/api/book/element')
 as y
-
 on c.uid=y.uid and SUBSTRING(c.create_time,1,10)=y.dt where c.hotel_name=y.name and dt<='2017-11-14' and dt>='2017-11-07')
 as h
-
 inner join
 travel_client_access as x
 on h.uid=x.uid and h.dt=x.dt where x.requesturi='/app/api/order/search' and x.dt<='2017-11-14' and x.dt>='2017-11-07' and h.currenttime>=x.currenttime
-
 `
 
 ## 3. 行中用户查看行中城市的用户数
