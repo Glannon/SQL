@@ -2,13 +2,10 @@
 SQL查询语句
 ## 1. 查询酒店订单
 
-| 字段             | 值 | 含义 |
-|------------------|----|------|
-| pay_type         | 0  | 预付 |
-| （付款方式）     | 1  | 现付 |
-| ppb_order_status | 4  | 确认 |
-| （订单状态）     | 5  | 取消 |
-|                  | 15 | 退款 |
+| pay_type     | 0 | 预付 | ppb_oeder_status | 4  | 确认 |   |
+|--------------|---|------|------------------|----|------|---|
+| （付款方式） | 1 | 现付 | （订单状态）     | 5  | 取消 |   |
+|              |   |      |                  | 15 | 退款 |   |
 
 使用时修改uid和时间  
 **SQL语句**  
@@ -38,7 +35,7 @@ select * from travel_client_access where dt>='2017-05-12' and dt<='2017-07-26' a
 
 
 ## 5. 单用户常居地查询
-使用时修改uid  
+使用时修改uid，dest_name为用户设置常居地，city_name为系统计算常居地
 
 `
 select * from mobile_user_new2 where uid='47B360D0-0424-49C0-AE12-77CC94902C8F'
@@ -54,18 +51,18 @@ select * from travel_client_access where dt='2017-09-12' and uid='47B360D0-0424-
 
 ## 7. 机票查询
 
-查询单用户机票订单，如查询单用户，添加uid限定条件即可   
+查询单用户机票订单，修改时间
 
 `
-select b.uid,depcity,arrcity,deptime from orderinfo_channel inner join (select touch_uid,uid from ods_travel_touch_uid ) as b on orderinfo_channel.deviceuid=b.touch_uid where dt>='2017-11-01' and dt<='2017-11-01' AND orderstatus NOT IN (0, 12, 20, 51, 91) 	
+select b.uid,depcity,arrcity,deptime from orderinfo_channel inner join (select touch_uid,uid from ods_travel_touch_uid where uid='45523841-53E3-428E-A6F0-C9861FA11F8E') as b on orderinfo_channel.deviceuid=b.touch_uid where dt>='2017-11-01' and dt<='2017-11-01' AND orderstatus NOT IN (0, 12, 20, 51, 91) 	
 `
 
 ## 8. 火车票查询
 
-查询单用户火车票订单，如查询单用户，添加uid限定条件即可    
+查询单用户火车票订单，修改时间     
 
 `
-select b.uid,create_time,train_from,train_to,train_start_time,train_end_time,train_seat,train_seat_count,ticket_price,pre_status from ods_train_order_channel inner join (select touch_uid,uid from ods_travel_touch_uid ) as b on ods_train_order_channel.gid=b.touch_uid and dt='2017-07-11' and chan_value='gonglue_client'
+select b.uid,create_time,train_from,train_to,train_start_time,train_end_time,train_seat,train_seat_count,ticket_price,pre_status from ods_train_order_channel inner join (select touch_uid,uid from ods_travel_touch_uid where uid='45523841-53E3-428E-A6F0-C9861FA11F8E') as b on ods_train_order_channel.gid=b.touch_uid and dt='2017-07-11' and chan_value='gonglue_client'
 `
 
 ## 9. 查询用户基本信息
