@@ -77,10 +77,11 @@ select a.uid,a.maxtime,a.mintime,a.shijiancha,a.locate_cityid,b.destid,b.destnam
 select a.uid,a.maxtime,a.mintime,a.shijiancha,a.locate_cityid,b.destid,b.destname,b.activetime from (select uid,max(currenttime) as maxtime,min(currenttime) as mintime,datediff(max(currenttime),min(currenttime)) as shijiancha, regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1) as locate_cityid from travel_client_access where dt>='2016-06-01' and dt<='2017-09-10' and requesturi='/api/city/locate' group by uid,regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1)) as a, (select uid,activetime,destid,destname from mobile_user_new2 where destname is not null order by rand() limit 10000) as b where a.uid=b.uid order by a.uid asc
 `
 
-## 7. 11月1日至12月10日到达昌北机场的订单用户
+## 7.14天内到达昌北机场的订单用户
 
 `
-select c.uid from (select uid from (select distinct deviceuid from orderinfo_channel where dt>='2017-11-01' and dt<='2017-12-10' and arrcity='南昌' and deptime>='2017-11-01' and deptime<='2017-12-10' and orderStatus NOT IN ('0','12','20','51','91')) as a,(select touch_uid,uid from ods_travel_touch_uid) as b where a.deviceuid=b.touch_uid) as c,(select uid,city_id from tmp_user_locate_result where city_id!='300021') as d where c.uid=d.uid
+select distinct(y.userid) from 
+  (select c.uid from (select uid from (select distinct deviceuid from orderinfo_channel where dt>='2017-11-01' and dt<='2017-12-26' and arrcity='南昌' and deptime>='2017-12-13' and deptime<='2017-12-26' and orderStatus NOT IN ('0','12','20','51','91')) as a,(select touch_uid,uid from ods_travel_touch_uid) as b where a.deviceuid=b.touch_uid) as c,(select uid,city_id from tmp_user_locate_result where city_id!='300021') as d where c.uid=d.uid) as x inner join tmp_userid_uid_20171218 as y on x.uid=y.uid
 `
 
 ## 8. 建立uid与userid关联表
@@ -92,7 +93,7 @@ create table tmp_userid_uid as select distinct uid,userid from travel_client_acc
 ## 9. 常居地在某地访问过某地(push)
 
 `
-select x.userid from   tmp_userid_uid_20171205 as x inner join (select a.uid from (select regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) as id,uid from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' ) as a inner join (select uid from mobile_user_new2 where destid in('300100','300083','703475','300077','300192','300089') or cityid in('300100','300083','703475','300077','300192','300089')) as b on a.uid=b.uid where a.id='300085' ) as y on x.uid=y.uid
+select distinct(x.userid) from  tmp_userid_uid_20171205 as x inner join (select a.uid from (select regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) as id,uid from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' ) as a inner join (select uid from mobile_user_new2 where destid in('300100','300083','703475','300077','300192','300089') or cityid in('300100','300083','703475','300077','300192','300089')) as b on a.uid=b.uid where a.id='300085' ) as y on x.uid=y.uid
 `
 
 
@@ -167,4 +168,8 @@ select x.dist_id,count(distinct(uid)) from (select dist_name,dist_id from poi_de
 inner join
 (select a.uid,a.city_name from mppb_order_channel as a  WHERE a.dt>='2017-07-01' and a.dt<='2017-08-01' AND a.STATUS IN('0','2') AND a.vid LIKE '91%' AND a.chan_value in('travel_touch','travel_gonglue','travel_client','travelnote_client','travel note_gonglue','gonglue_zhuanti','gonglue_zhuanti2','jd_mt_huaweiqjzn') AND SUBSTRING(a.create_time,1,10)>='2017-08-01' AND SUBSTRING(a.create_time,1,10)<='2017-07-01' ) as y
 on x.dist_name=y.city_name group by x.dist_id
+`
+## 19. 14天内有新加坡酒店订单的用户（入住时间）
+`
+select distinct(d.userid)  from (select b.uid,city_name,from_date from mppb_order_channel as a inner join (select touch_uid,uid from ods_travel_touch_uid ) as b on a. uid=b.touch_uid WHERE a.dt>='2017-11-01' and a.dt<='2017-12-26' AND a.STATUS IN('0','2') AND a.vid LIKE '91%' AND a.chan_value in('travel_touch','travel_gonglue','travel_client','travelnote_client','travel note_gonglue','gonglue_zhuanti','gonglue_zhuanti2','jd_mt_huaweiqjzn') and a.from_date>='2017-12-13' and a.from_date<='2017-12-26' and a.city_name='新加坡')as c  inner join tmp_userid_uid_20171218 as d on c.uid=d.uid
 `
