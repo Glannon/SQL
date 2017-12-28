@@ -93,14 +93,14 @@ create table tmp_userid_uid as select distinct uid,userid from travel_client_acc
 ## 9. 常居地在某地访问过某地(push)
 
 `
-select distinct(x.userid) from  tmp_userid_uid_20171205 as x inner join (select a.uid from (select regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) as id,uid from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' ) as a inner join (select uid from mobile_user_new2 where destid in('300100','300083','703475','300077','300192','300089') or cityid in('300100','300083','703475','300077','300192','300089')) as b on a.uid=b.uid where a.id='300085' ) as y on x.uid=y.uid
+select distinct(x.userid) from  tmp_userid_uid_20171218 as x inner join (select a.uid from (select regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) as id,uid from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' ) as a inner join (select uid from mobile_user_new2 where destid in('300100','300083','703475','300077','300192','300089') or cityid in('300100','300083','703475','300077','300192','300089')) as b on a.uid=b.uid where a.id='300085' ) as y on x.uid=y.uid
 `
 
 
 ## 10. 定位在某地访问过某地
 
 `
-select distinct(x.userid) from tmp_userid_uid_20171205 as x inner join (select a.uid from (select regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) as id,uid from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' ) as a inner join (select regexp_extract(requestparammap,'cityId=([0-9]+)',1) as id,uid from travel_client_access where requesturi='/api/city/locate' and dt>='2017-11-05' ) as b on a.uid=b.uid where a.id in ('300085') and b.id in ('300100','300083','703475','300077','300192','300089')) as y on x.uid=y.uid
+select distinct(x.userid) from tmp_userid_uid_20171218 as x inner join (select a.uid from (select regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) as id,uid from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' ) as a inner join (select regexp_extract(requestparammap,'cityId=([0-9]+)',1) as id,uid from travel_client_access where requesturi='/api/city/locate' and dt>='2017-11-05' ) as b on a.uid=b.uid where a.id in ('300085') and b.id in ('300100','300083','703475','300077','300192','300089')) as y on x.uid=y.uid
 `
 
 
@@ -138,7 +138,7 @@ select a.dt,a.uid,regexp_extract(requestparammap,'query=([^, }]+)',1) as query,b
 ## 15. 访问过某个城市或景区的用户
 **城市**   
 `
-select distinct(x.userid) from   tmp_userid_uid_20171211 as x inner join
+select distinct(x.userid) from   tmp_userid_uid_20171218 as x inner join
   (select distinct(uid) from travel_client_access where requesturi='/api/city/get' and dt>='2017-11-05' and dt <='2017-11-05' and
   regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) in ('299914')) as y
  on x.uid=y.uid
@@ -146,7 +146,7 @@ select distinct(x.userid) from   tmp_userid_uid_20171211 as x inner join
 
 **景区、景点**    
 `
- select distinct(x.userid) from  tmp_userid_uid_20171211 as x inner join
+ select distinct(x.userid) from  tmp_userid_uid_20171218 as x inner join
    (select distinct(uid) from travel_client_access where dt>='2017-11-05' and dt <='2017-11-05' and requesturi='/api/book/element' and requestparammap like '%poiType=4%' and regexp_extract(requestparammap,'[{ ]poiId=([0-9]+)',1) in ('713020')) as y
   on x.uid=y.uid
  `
