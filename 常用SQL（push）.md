@@ -173,3 +173,7 @@ on x.dist_name=y.city_name group by x.dist_id
 `
 select distinct(d.userid)  from (select b.uid,city_name,from_date from mppb_order_channel as a inner join (select touch_uid,uid from ods_travel_touch_uid ) as b on a. uid=b.touch_uid WHERE a.dt>='2017-11-01' and a.dt<='2017-12-26' AND a.STATUS IN('0','2') AND a.vid LIKE '91%' AND a.chan_value in('travel_touch','travel_gonglue','travel_client','travelnote_client','travel note_gonglue','gonglue_zhuanti','gonglue_zhuanti2','jd_mt_huaweiqjzn') and a.from_date>='2017-12-13' and a.from_date<='2017-12-26' and a.city_name='新加坡')as c  inner join tmp_userid_uid_20171218 as d on c.uid=d.uid
 `
+## 20. 常居地在成都
+`
+select distinct(a.userid) from tmp_userid_uid_20171218 as a inner join (select uid from mobile_user_new2 where destid in ('300085') or cityid in ('300085')) as b on a.uid=b.uid
+`
