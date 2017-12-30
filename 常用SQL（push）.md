@@ -184,7 +184,11 @@ select distinct(a.userid) from tmp_userid_uid_20171218 as a inner join (select u
 select distinct(x.userid) from (select distinct(a.userid) from tmp_userid_uid_20171218 as a inner join (select c.uid from (select uid from mobile_user_new2 where destid in ('300085','299979') or cityid in ('300085','299979')) as b inner join (select distinct(uid) from travel_client_access where dt>='2017-12-01' and dt <='2017-12-28' and requesturi='/api/book/element' and requestparammap like '%poiType=4%' and regexp_extract(requestparammap,'[{ ]poiId=([0-9]+)',1) in ('720460')) as c on b.uid=c.uid) as d on a.uid=d.uid) as x  inner join (select distinct(userid) from travel_client_access where dt>='2017-12-01' and dt <='2017-12-28' and userid like '%@qunar%') as y on x.userid=y.userid
 `
   
-定位
+定位  
 `
 select distinct(x.userid) from (select distinct(a.userid) from tmp_userid_uid_20171218 as a inner join (select c.uid from (select uid from travel_client_access where dt>='2017-12-24' and dt <='2017-12-28' and requesturi='/api/city/located' and (requestparammap like '%cityId=300085%' or requestparammap like '%cityId=299979%')) as b inner join (select distinct(uid) from travel_client_access where dt>='2017-12-01' and dt <='2017-12-28' and requesturi='/api/book/element' and requestparammap like '%poiType=4%' and regexp_extract(requestparammap,'[{ ]poiId=([0-9]+)',1) in ('720460')) as c on b.uid=c.uid) as d on a.uid=d.uid) as x  inner join (select distinct(userid) from travel_client_access where dt>='2017-12-01' and dt <='2017-12-28' and userid like '%@qunar%') as y on x.userid=y.userid
+`
+## 22.从suggest进入某城市游记用户
+`
+	select distinct(a.userid) from tmp_userid_uid_20171218 as a inner join (select distinct(uid) from travel_client_access where requesturi='/api/book/search' and requestparammap like '%from=destsuggest%' and requestparammap like '%type=2%' and dt>='2017-12-01' and dt<='2017-12-28' and requestparammap like '%keyword=新加坡%') as b on a.uid=b.uid
 `
