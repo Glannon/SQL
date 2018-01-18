@@ -32,4 +32,8 @@ select b.uid,b.type,sum(b.shuliang) from
 (select uid,begin_middle_date from tmp_travel_split_final where travel_status='during_travel' )as a 
 inner join (select uid,dt,requesturi,regexp_extract(requestparammap,'poiType=([^, }]+)',1) as type,count(uid) as shuliang from travel_client_access where dt>='2017-12-25' and requesturi='/api/book/element' group by uid,dt,regexp_extract(requestparammap,'poiType=([^, }]+)',1)) as b 
 on a.uid=b.uid where b.dt>=a.begin_middle_date group by b.uid,b.type
-` 
+`     
+常居地定位经纬度    
+`
+select a.uid,b.atlng,b.cityid from (select uid,destid from mobile_user_new2 where destid is not null order by rand() limit 100) as a  inner join  (select uid,regexp_extract(requestparammap,'cityId=([^, }]+)',1) as cityid,regexp_extract(requestparammap,'atlng=([^, }]+)',1) as atlng from travel_client_access where dt>='2018-01-01' and requesturi='/api/city/locate') as b on a.uid=b.uid and a.destid=b.cityid
+`
