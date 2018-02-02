@@ -7,7 +7,7 @@ where dt>='2017-12-25' and substring(requesturi,1,5)='/api/') as b
 on a.uid=b.uid where b.dt>=a.begin_middle_date group by b.fromm,b.requesturi
 `    
 
-行中用户POI访问来源及类型  
+行中用户POI访问来源及类型    
 `
 select b.requesturi,b.fromm,b.type,count(distinct(a.uid)) from 
 (select uid,begin_middle_date from tmp_travel_split_final where travel_status='during_travel' )as a inner join 
@@ -17,7 +17,7 @@ where dt>='2017-12-25' and requesturi='/api/book/element') as b on a.uid=b.uid w
 group by b.fromm,b.requesturi,b.type
 `    
 
-行中用户分类    
+行中用户分类      
 `
 select b.uid,b.requesturi,sum(b.shuliang) from 
 (select uid,begin_middle_date from tmp_travel_split_final where travel_status='during_travel' )as a 
@@ -26,7 +26,7 @@ where dt>='2017-12-25' and (substring(requesturi,1,5)='/api/' or substring(reque
 on a.uid=b.uid where b.dt>=a.begin_middle_date group by b.uid,b.requesturi
 `
     
-行中用户访问POI分类    
+行中用户访问POI分类      
 `
 select b.uid,b.type,sum(b.shuliang) from 
 (select uid,begin_middle_date from tmp_travel_split_final where travel_status='during_travel' )as a 
@@ -35,7 +35,7 @@ on a.uid=b.uid where b.dt>=a.begin_middle_date group by b.uid,b.type
 `     
 
 
-行前访问  
+行前访问    
 `
 select regexp_extract(b.bbb,'requesturi=([^, }]+)',1),regexp_extract(b.bbb,'from=([^, }]+)',1),count(distinct(a.uid)) from (select uid,begin_date,begin_middle_date from tmp_travel_split_final where travel_status='during_travel' )as a inner join (select distinct(concat('uid=',uid,',requesturi=',requesturi,',from=',regexp_extract(requestparammap,'from=([^, }]+)',1))) as bbb,dt from travel_client_access where dt>='2017-12-25' and (substring(requesturi,1,5)='/api/') or (substring(requesturi,1,5)='/app/')) as b on a.uid=regexp_extract(b.bbb,'uid=([^, }]+)',1) where b.dt<=a.begin_middle_date and b.dt>=a.begin_date group by regexp_extract(b.bbb,'requesturi=([^, }]+)',1),regexp_extract(b.bbb,'from=([^, }]+)',1)
 `  
@@ -48,11 +48,12 @@ select a.uid,b.atlng,b.cityid from (select uid,destid from mobile_user_new2 wher
 
 ## 3. 分月统计访问城市及省份、国家页面的人数
 
-城市  
+城市    
 `
 select substring(dt,1,7),regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1),count(distinct(uid)) from travel_client_access where requesturi='/api/city/get' and dt>='2017-01-01' and dt<='2017-12-31' and (regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1)='302383' or regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1)='316802') group by substring(dt,1,7),regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1)
-`  
-国家、省份  
+`    
+
+国家、省份    
 `
 select substring(dt,1,7),regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1),count(distinct(uid)) from travel_client_access where requesturi='/api/city/search' and dt>='2017-01-01' and dt<='2017-12-31' and (regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1)='316801' or regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1)='300468') group by substring(dt,1,7),regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1)
 `  
@@ -104,15 +105,16 @@ select a.id,count(distinct(a.uid)) from (select regexp_extract(requestparammap,'
 **全部用户**  
 `
 select a.uid,a.maxtime,a.mintime,a.shijiancha,a.locate_cityid,b.destid,b.destname from (select uid,max(currenttime) as maxtime,min(currenttime) as mintime,datediff(max(currenttime),min(currenttime)) as shijiancha, regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1) as locate_cityid from travel_client_access where dt>='2017-08-04' and dt<='2017-09-04' and requesturi='/api/city/locate' group by uid,regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1)) as a, (select uid,destid,destname from mobile_user_new2 where destname is not null) as b where a.uid=b.uid order by a.uid asc
-`
+`  
 
-**随机样本b（随机10000用户）**    
-`(select uid,activetime,destid,destname from mobile_user_new2 where destname is not null order by rand() limit 10000) as b`
+**随机样本b（随机10000用户）**      
+
+`(select uid,activetime,destid,destname from mobile_user_new2 where destname is not null order by rand() limit 10000) as b`  
 
 **抽样10000条（抽取10000用户）**    
-`order by rand() limit 10000`
+`order by rand() limit 10000`  
 
-**取样（抽样）代码**
+**取样（抽样）代码**  
 
 `
 select a.uid,a.maxtime,a.mintime,a.shijiancha,a.locate_cityid,b.destid,b.destname,b.activetime from (select uid,max(currenttime) as maxtime,min(currenttime) as mintime,datediff(max(currenttime),min(currenttime)) as shijiancha, regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1) as locate_cityid from travel_client_access where dt>='2016-06-01' and dt<='2017-09-10' and requesturi='/api/city/locate' group by uid,regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1)) as a, (select uid,activetime,destid,destname from mobile_user_new2 where destname is not null order by rand() limit 10000) as b where a.uid=b.uid order by a.uid asc
