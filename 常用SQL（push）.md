@@ -83,3 +83,8 @@ select distinct(x.userid) from (select distinct(a.userid) from tmp_userid_uid_20
 `
 select distinct(a.userid) from tmp_userid_uid_20171218 as a inner join (select distinct(uid) from travel_client_access where requesturi='/api/book/search' and requestparammap like '%from=destsuggest%' and requestparammap like '%type=2%' and dt>='2017-12-01' and dt<='2017-12-28' and requestparammap like '%keyword=新加坡%') as b on a.uid=b.uid
 `
+
+## 13. push聪游榜打开人数
+`
+select dt,count(userid),count(distinct userid) from access_info where dt>='2018-01-25' and dt<='2018-01-25' and modelname='touch' and uri like '%/smartlist/6982704%' and parammap like '%pushcyb%' group by dt order by dt asc
+`
