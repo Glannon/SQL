@@ -95,14 +95,16 @@ on x.uid=y.uid where y.currenttime>=x.begin_middle_date and y.name=x.cityname
 
 
 ## 7. 16年来海南各市旅游人数分布
-*执行时间较长*
+*执行时间较长*  
+
 `
 select a.id,count(distinct(a.uid)) from (select regexp_extract(requestparammap,'[{ ]id=([0-9]+)',1) as id,uid,dt from travel_client_access where requesturi='/api/city/get' and dt>='2016-01-01' and dt<='2016-12-31') as a inner join (select regexp_extract(requestparammap,'cityId=([0-9]+)',1) as cityid,uid,dt from travel_client_access where requesturi='/api/city/locate' and dt>='2016-01-01' and dt<='2016-12-31') as b on a.uid=b.uid and a.dt=b.dt where a.id in ('300188','300148','300097','300145','300146','300149','300187','300094') and b.cityid!='300188' and b.cityid!='300148' and b.cityid!='300097' and b.cityid!='300145' and b.cityid!='300146' and b.cityid!='300149' and b.cityid!='300187' and b.cityid!='300094' group by a.id
 `
 
 ## 8. 计算常居地数据取样语句
 *执行时间较长*  
-**全部用户**  
+**全部用户**    
+
 `
 select a.uid,a.maxtime,a.mintime,a.shijiancha,a.locate_cityid,b.destid,b.destname from (select uid,max(currenttime) as maxtime,min(currenttime) as mintime,datediff(max(currenttime),min(currenttime)) as shijiancha, regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1) as locate_cityid from travel_client_access where dt>='2017-08-04' and dt<='2017-09-04' and requesturi='/api/city/locate' group by uid,regexp_extract(requestparammap,'[{ ]cityId=([0-9]+)',1)) as a, (select uid,destid,destname from mobile_user_new2 where destname is not null) as b where a.uid=b.uid order by a.uid asc
 `  
@@ -112,6 +114,7 @@ select a.uid,a.maxtime,a.mintime,a.shijiancha,a.locate_cityid,b.destid,b.destnam
 `(select uid,activetime,destid,destname from mobile_user_new2 where destname is not null order by rand() limit 10000) as b`  
 
 **抽样10000条（抽取10000用户）**    
+
 `order by rand() limit 10000`  
 
 **取样（抽样）代码**  
