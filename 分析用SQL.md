@@ -149,3 +149,16 @@ select distinct(a.userid) from tmp_userid_uid_20171218 as a inner join (select d
 `
 select count(uid),count(distinct(uid)) from travel_client_access where requesturi='/api/book/search' and requestparammap like '%from=search%' and dt>='2018-01-01' and dt<='2018-01-01'
 `  
+
+## 14. 2月1日新用户查看的第一篇游记来源于发现页
+`
+select count(distinct(uid)) from 
+(select uid from mobile_user_new2 where ativetime='2018-02-01') as a inner join 
+(select uid from 
+(select uid,max(currenttime) as time from travel_client_access where requesturi='/api/book/getSimplified' and dt='2018-02-01') as b 
+inner join 
+(select uid,currenttime from travel_client_access where requesturi='/api/book/getSimplified' and dt='2018-02-01' 
+and (regexp_extract(requestparammap,'from=([^, }]+)',1)='explore' or regexp_extract(requestparammap,'from=([^, }]+)',1)='exploreResult')) as c 
+on b.uid=c.uid and b.time=c.currenttime) as d on a.uid=d.uid
+`  
+
