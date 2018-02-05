@@ -11,7 +11,10 @@ select distinct(y.userid) from
 
 `
 create table tmp_userid_uid as select distinct uid,userid from travel_client_access where dt>='2016-01-01' and userid like '%@qunar%' and uid!='000000000000'
+`  
 `
+create table tmp_userid_uid_20180205 as select distinct uid,userid from (select distinct uid,userid from travel_client_access where dt>='2018-01-15' and userid like '%@qunar%' and uid!='000000000000' union select uid,userid from tmp_userid_uid_20180129) a
+`  
 
 ## 3. 常居地在某地访问过某地(push)
 
