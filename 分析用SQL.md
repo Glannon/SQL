@@ -152,10 +152,10 @@ select count(uid),count(distinct(uid)) from travel_client_access where requestur
 
 ## 14. 2月1日新用户查看的第一篇游记来源于发现页
 `
-select count(distinct(uid)) from 
+select count(distinct(a.uid)) from 
 (select uid from mobile_user_new2 where substring(activetime,1,10)='2018-02-01') as a inner join 
-(select uid from 
-(select uid,max(currenttime) as time from travel_client_access where requesturi='/api/book/getSimplified' and dt='2018-02-01') as b 
+(select b.uid from 
+(select uid,max(currenttime) as time from travel_client_access where requesturi='/api/book/getSimplified' and dt='2018-02-01' group by uid) as b 
 inner join 
 (select uid,currenttime from travel_client_access where requesturi='/api/book/getSimplified' and dt='2018-02-01' 
 and (regexp_extract(requestparammap,'from=([^, }]+)',1)='explore' or regexp_extract(requestparammap,'from=([^, }]+)',1)='exploreResult')) as c 
