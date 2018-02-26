@@ -138,9 +138,19 @@ on a.uid=b.uid and a.dt=b.dt where a.currenttime<=b.currenttime group by a.label
 
 ## 11. 搜索词为城市名+一日游用户
 
+优化后的语句  
+
 `
-select a.dt,a.uid,regexp_extract(requestparammap,'query=([^, }]+)',1) as query,b.distname from travel_client_access as a,poi_detail as b where a.dt>='2017-10-11' and a.dt<='2017-12-10' and a.requesturi='/api/search/dest'  and regexp_extract(requestparammap,'query=([^, }]+)',1)=CONCAT(dist_name,'一日游') or regexp_extract(requestparammap,'query=([^, }]+)',1)='一日游' or regexp_extract(requestparammap,'query=([^, }]+)',1)=CONCAT(dist_name,'周边一日游')
+select a.uid,a.dt,a.query from 
+(select uid,dt,regexp_extract(requestparammap,'query=([^, }]+)',1) as query from travel_client_access where requesturi='/api/search/dest' and dt>='2017-10-11' and dt<='2017-12-10') as a inner join (select distinct(dist_name) from poi_detail) as b on (a.query=CONCAT(b.dist_name,'一日游') or a.query=CONCAT(b.dist_name,'一日游') or a.query=CONCAT(b.dist_name,'一日游'))
+`  
+
+原始语句  
+
 `
+select a.dt,a.uid,regexp_extract(requestparammap,'query=([^, }]+)',1) as query,b.dist_name from travel_client_access as a,poi_detail as b where a.dt>='2017-10-11' and a.dt<='2017-12-10' and a.requesturi='/api/search/dest'  and regexp_extract(requestparammap,'query=([^, }]+)',1)=CONCAT(dist_name,'一日游') or regexp_extract(requestparammap,'query=([^, }]+)',1)='一日游' or regexp_extract(requestparammap,'query=([^, }]+)',1)=CONCAT(dist_name,'周边一日游')
+`  
+
 ## 12.从suggest进入某城市游记用户
 `
 select distinct(a.userid) from tmp_userid_uid_20171218 as a inner join (select distinct(uid) from travel_client_access where requesturi='/api/book/search' and requestparammap like '%from=destsuggest%' and requestparammap like '%type=2%' and dt>='2017-12-01' and dt<='2017-12-28' and requestparammap like '%keyword=新加坡%') as b on a.uid=b.uid
