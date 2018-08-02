@@ -170,5 +170,31 @@ inner join
 (select uid,currenttime from travel_client_access where requesturi='/api/book/getSimplified' and dt='2018-02-01' 
 and (regexp_extract(requestparammap,'from=([^, }]+)',1)='explore' or regexp_extract(requestparammap,'from=([^, }]+)',1)='exploreResult')) as c 
 on b.uid=c.uid and b.time=c.currenttime) as d on a.uid=d.uid
-`  
+`
+
+## 15.大客户端景点、玩乐列表uv  
+
+select dt,count(distinct uid)  from travel_hy_access where requesturi like '%/api/poi/%' and (requestparammap like '%poiType=4%' or requestparammap like '%poiType=6%') and dt>='2018-07-01' group by dt  
+
+## 16.大客户端玩乐列表点击
+select dt,clickname,count(distinct uid) from travel_hy_click where dt>='2018-07-01' and pagename='page_poi_play_list' group by clickname  
+
+## 17.购物列表点击
+select dt,clickname,count(distinct uid) from travel_hy_click where dt>='2018-07-01' and pagename='page_poi_shopping_list' group by clickname,dt
+
+## 18.购物列表uv
+select dt,count(distinct uid)  from travel_hy_access where requesturi like '%/api/poi/%' and  requestparammap like '%poiType=3%' and dt>='2018-07-01' group by dt
+
+## 19.美食列表uv
+select dt,count(distinct uid)  from travel_hy_access where requesturi like '%/api/poi/%' and  requestparammap like '%poiType=5%' and dt>='2018-07-01' group by dt
+
+## 20.路线推荐列表
+select dt,count(distinct uid)  from travel_hy_access where requesturi like '/page/routeline/list%'  and dt>='2018-07-01' group by dt
+
+## 21.路线推荐列表点击
+
+select dt,clickname,count(distinct uid) from travel_hy_click where dt>='2018-07-01' and pagename='page_route_line_list' group by clickname,dt
+
+
+
 
